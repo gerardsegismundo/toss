@@ -1,0 +1,21 @@
+Main technologies used:
+  1. Programming language: Javascript ES6 to ES8
+  2. Frontend framework: Vue JS 
+  3. Backend framework: Node / Express JS
+  4. NoSQL Database: MongoDB 
+
+Requirements:
+  1. Node.js. Link: https://nodejs.org/en/download/ 
+  2. MongoDB. Link: https://www.mongodb.com/download-center/community
+
+  * If watson-developer-cloud package manager requires python - Link: https://www.python.org/downloads/
+
+How to run :
+  1. Open Command Prompt.
+  2. Go to client directory folder(cd client) using cmd and type npm install. // "npm install" is only required if running the program for the first time. 
+  3. Then to the main directory(cd ..) type npm install.
+  4. To the main directory type "npm run dev" - runs both the client and the server.
+
+  * Url path to admin dashboard - http://localhost:8080/admin-dashboard
+
+  IBM Watsons API Reference: https://console.bluemix.net/apidocs/assistant

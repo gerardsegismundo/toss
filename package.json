@@ -1,0 +1,41 @@
+{
+  "name": "toss",
+  "version": "1.0.0",
+  "description": "Chatbot single page Node application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "nodemon server/index.js",
+    "client": "npm run serve --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-async-errors": "^3.1.1",
+    "gridfs-stream": "^1.1.1",
+    "helmet": "^3.15.0",
+    "joi": "^14.3.0",
+    "joi-browser": "^13.4.0",
+    "lodash": "^4.17.11",
+    "mongo-xlsx": "^1.0.12",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.4.0",
+    "multer": "^1.4.1",
+    "multer-gridfs-storage": "^3.2.3",
+    "watson-developer-cloud": "^3.18.1",
+    "winston": "2.4.0",
+    "winston-mongodb": "^4.0.3",
+    "wordpos": "^1.2.0",
+    "xls-to-json-lc": "^0.3.4",
+    "xlsx-to-json": "^0.3.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.18.9"
+  }
+}
