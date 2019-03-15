@@ -3,30 +3,35 @@
     <app-header/>
     <app-body/>
     <app-footer/>
+    <notifications group="success" classes="vue-notification success" position="bottom left"/>
+    <notifications group="error" classes="vue-notification error" position="bottom left"/>
   </div>
 </template>
 
 <script>
-import Header from '@/components/client/Header.vue';
-import Footer from '@/components/client/Footer.vue';
-import Body from '@/components/client/Body.vue';
+import Header from '@/components/client/Header.vue'
+import Footer from '@/components/client/Footer.vue'
+import Body from '@/components/client/Body.vue'
 
 export default {
   name: 'MainComponent',
   data() {
     return {
       isAdmin: false
-    };
+    }
   },
   components: {
     appHeader: Header,
     appFooter: Footer,
     appBody: Body
   }
-};
+}
 </script>
 
 <style>
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   overflow-x: hidden;
@@ -65,13 +70,13 @@ ul {
   cursor: pointer;
 }
 
-.success {
+/* .success {
   color: #28a745;
 }
 
 .success:hover {
   color: #218838;
-}
+} */
 
 /* Bootstrap */
 .modal-content {

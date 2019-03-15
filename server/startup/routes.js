@@ -6,7 +6,7 @@ const excel = require('../routes/excel')
 const response = require('../routes/response')
 const responseData = require('../routes/responseData')
 const filtered = require('../routes/filtered')
-const watsonAssistant = require('../routes/watsonsAssistant')
+const watsonAssistantIntents = require('../routes/watsonsAssistantIntents')
 const watsonAssistantCredentials = require('../routes/watsonAssistantCredentials')
 const watsonAssistantWorkspace = require('../routes/watsonAssistantWorkspace')
 
@@ -18,7 +18,7 @@ module.exports = (app) => {
 	app.use('/api/filtered', filtered)
 	app.use('/api/response', response)
 	app.use('/api/response-data', responseData)
-	app.use('/api/watson-assistant', watsonAssistant)
+	app.use('/api/watson-assistant/intents', watsonAssistantIntents)
 	app.use('/api/watson-assistant/workspace', watsonAssistantWorkspace)
 	app.use('/api/watson-assistant/credentials', watsonAssistantCredentials)
 }

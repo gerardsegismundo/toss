@@ -12,11 +12,11 @@
           </b-col>
         </b-row>
       </li>
-      <div v-if="isOnClick">
-        <router-link :to="{name: 'Assistant'}">
+      <div class="ibm-list" :class="isOnClick? 'slide-down':'slide-up'">
+        <router-link :to="{name: 'Assistant'}" v-if="isOnClick">
           <li class="text-center">Watson Assistant v1</li>
         </router-link>
-        <router-link :to="{name: 'Discovery'}">
+        <router-link :to="{name: 'Discovery'}" v-if="isOnClick">
           <li class="text-center">Discovery-8r</li>
         </router-link>
       </div>
@@ -53,6 +53,54 @@ export default {
 </script>
 
 <style scoped>
+.ibm-list {
+  animation-duration: 0.5s;
+  transition: ease-in;
+  z-index: 999;
+}
+
+.ibm-list.slide-down {
+  animation-name: slideDown;
+}
+.ibm-list.slide-up {
+  animation-name: slideUp;
+}
+
+.ibm-list li {
+  animation-name: fade;
+  animation-duration: 0.5s;
+  transition: 0.25s ease-in-out;
+}
+
+@keyframes slideDown {
+  0% {
+    height: 0rem;
+    transition: 0.5s;
+  }
+  100% {
+    height: 8rem;
+    transition: 0.5s;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    height: 8rem;
+  }
+  100% {
+    height: 0rem;
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 nav {
   cursor: pointer;
   background-color: rgb(51, 51, 51);

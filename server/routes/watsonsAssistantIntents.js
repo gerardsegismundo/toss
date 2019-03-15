@@ -7,7 +7,7 @@ async function watsonAssistant() {
 	const credentials = await Credentials.findOne({ service: 'assistant' })
 	console.log(credentials)
 
-	/* 	const { apiKey, url, version } = credentials
+	const { apiKey, url, version } = credentials
 
 	const assistant = new watson.AssistantV1({
 		iam_apikey: apiKey,
@@ -15,14 +15,12 @@ async function watsonAssistant() {
 		url
 	})
 
-	return assistant */
+	return assistant
 }
-
-// INTENTS --------------------------------------------------------
 
 // @route GET /list-intents/:id
 // @desc get list intents
-router.get('/list-intents/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
 	const assistant = await watsonAssistant()
 
 	const payload = { workspace_id: req.params.id }
@@ -33,9 +31,9 @@ router.get('/list-intents/:id', async (req, res) => {
 	})
 })
 
-// @route GET /intent/:name
+// @route GET /intent
 // @desc Get information about an intent.
-router.get('/intent/', async (req, res) => {
+router.get('/', async (req, res) => {
 	const { workspace_id, intent } = req.query
 	const payload = {
 		workspace_id,
@@ -50,8 +48,8 @@ router.get('/intent/', async (req, res) => {
 })
 
 // @route POST /create-intent
-// @desc createan intent
-router.post('/create-intent', async (req, res) => {
+// @desc create an intent
+router.post('/', async (req, res) => {
 	const assistant = await watsonAssistant()
 
 	const { workspace_id, intent, description, examples } = req.body

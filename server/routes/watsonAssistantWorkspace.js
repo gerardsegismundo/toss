@@ -23,12 +23,13 @@ async function watsonAssistant() {
 // @desc GET skills
 router.get('/', async (req, res) => {
 	const assistant = await watsonAssistant()
-
 	if (!assistant) return res.send(null)
 
 	assistant.listWorkspaces((err, response) => {
 		if (err) return res.send(err)
 		res.send(response)
+		// console.log(response)
+		// res.send(response)
 	})
 })
 

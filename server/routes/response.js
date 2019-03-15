@@ -15,57 +15,60 @@ router.get('/request/:request', async (req, res) => {
 	const { request } = req.params
 
 	// LOCAL RESPONSE
-	/* const messageArray = request.trim().split(' ');
+	const messageArray = request.trim().split(' ')
 
 	// FIX - possible solution: map() in $in
-	await Response.findOne({ entities: { $in: messageArray } })
+	const local = await Response.findOne({ entities: { $in: messageArray } })
 		.then(async (response) => {
 			// If entity found.
 			if (response) {
 				// Count match entities.
-				const { entities } = response;
-				let matchCount = 0;
+				const { entities } = response
+				let matchCount = 0
 
 				entities.map((entity) => {
 					if (messageArray.includes(entity)) {
-						matchCount += 1;
+						matchCount += 1
 					}
-				});
+				})
 
 				// If required entity achieved
-				const requiredEntity = response.entities.length;
-				if (matchCount >= requiredEntity) return res.send(response.content);
+				const requiredEntity = response.entities.length
+				if (matchCount >= requiredEntity) return res.send(response.content)
 
 				// PROBLEM -- if has matched a single entity, does not look for the next response that has more matched entites
 			}
 
-			await getEntities(messageArray, request);
+			// await getEntities(messageArray, request);
 		})
-		.catch((err) => console.log('ERROR LOCAL' + err)); */
+		.catch((err) => console.log('ERROR LOCAL' + err))
 
 	// WATSON RESPONSE
-	const watson = require('watson-developer-cloud')
-	const { Credentials } = require('../models/Credentials')
+	if (!local) {
+		const watson = require('watson-developer-cloud')
+		const { Credentials } = require('../models/Credentials')
 
-	const credentials = await Credentials.findOne({ service: 'assistant' })
-	const { apiKey, url, workspaceId, version } = credentials
+		const credentials = await Credentials.findOne({ service: 'assistant' })
+		const { apiKey, url, workspaceId, version } = credentials
 
-	const conversation = new watson.AssistantV1({
-		iam_apikey: apiKey,
-		version,
-		url
-	})
+		const conversation = new watson.AssistantV1({
+			iam_apikey: apiKey,
+			version,
+			url
+		})
 
-	const payload = {
-		workspace_id: workspaceId,
-		input: { text: request }
+		const payload = {
+			workspace_id: workspaceId,
+			input: { text: request }
+		}
+
+		// Send the input to the conversation service
+		conversation.message(payload, (err, data) => {
+			if (err) return res.end()
+
+			res.send(data.output[0].text)
+		})
 	}
-
-	// Send the input to the conversation service
-	conversation.message(payload, (err, data) => {
-		if (err) return res.end()
-		res.send(data[0].text)
-	})
 })
 
 // @route POST /search-phrase

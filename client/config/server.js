@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 		API_RESPONSE_DATA: 'http://localhost:5000/api/response-data',
 		API_WATSONS_WORKSPACE: 'http://localhost:5000/api/watson-assistant/workspace',
 		API_WATSONS_CREDENTIALS: 'http://localhost:5000/api/watson-assistant/credentials',
+		API_WATSONS_INTENTS: 'http://localhost:5000/api/watson-assistant/intents',
 		mongoURI: process.env.MONGO_URI
 	}
 }

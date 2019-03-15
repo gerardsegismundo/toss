@@ -22,7 +22,9 @@
                   <b-dropdown-item
                     v-on:click.stop="onRename(workspace.name, workspace.workspace_id)"
                   >Rename</b-dropdown-item>
-                  <b-dropdown-item @click="onDelete(workspace.workspace_id)">Delete</b-dropdown-item>
+                  <b-dropdown-item
+                    @click.stop="onDelete(workspace.workspace_id, workspace.name)"
+                  >Delete</b-dropdown-item>
                 </b-dropdown>
               </b-col>
             </b-row>
@@ -64,10 +66,6 @@ export default {
   },
   props: ['workspaces'],
   methods: {
-    onDelete(id) {
-      this.$emit('onDelete', id)
-    },
-
     viewSkill(name, id) {
       this.$router.push({ name: 'Intents', params: { name, id } })
     },
@@ -86,14 +84,49 @@ export default {
         name: this.onRenameModal.name
       }
 
-      await this.axios.patch(API_WATSONS_WORKSPACE, payload)
+      this.$emit('spinnerOn', `Renaming to ${payload.name}...`)
+      const rename = await this.axios.patch(API_WATSONS_WORKSPACE, payload)
+
+      if (!rename) {
+        return this.$notify({
+          group: 'error',
+          title: 'Rename Skill',
+          text: `Renaming skill failed.`
+        })
+      }
+
+      this.$notify({
+        group: 'success',
+        title: 'Rename Skill',
+        text: `Renaming skill to ${this.onRenameModal.name} is successfull!`
+      })
+
+      this.$emit('spinnerOff')
       this.$emit('onGetWorkspaces')
     },
 
-    async onDelete(id) {
-      const res = await this.axios.delete(`${API_WATSONS_WORKSPACE}/${id}`)
+    async onDelete(id, name) {
+      this.$emit('spinnerOn', `Deleting ${name}...`)
+      const onDelete = await this.axios.delete(`${API_WATSONS_WORKSPACE}/${id}`)
 
-      this.$emit('onGetWorkspaces')
+      if (!onDelete) {
+        return this.$notify({
+          group: 'error',
+          title: 'Delete Skill',
+          text: `Deleting skill failed.`
+        })
+      }
+
+      this.$notify({
+        group: 'success',
+        title: 'Delete Skill',
+        text: `${name.charAt(0).toUpperCase() +
+          name.slice(1)} deleted successfully.`
+      })
+
+      this.$emit('spinnerOff')
+
+      return this.$emit('onGetWorkspaces')
     }
   }
 }
@@ -108,8 +141,7 @@ export default {
   border-top: 2px solid white;
   border-right: 2px solid white;
   transition: 0.5s;
-  z-index: 0;
-  opacity: 1;
+  =opacity: 1;
 }
 
 .workspace-item .card:hover {
@@ -119,11 +151,7 @@ export default {
   border-right: 2px solid lightgrey;
 }
 
-.workspace-item button {
-  z-index: 1;
-}
-
-.workspace-header {
+= .workspace-header {
   margin-bottom: 2rem;
   font-weight: 350;
   font-size: 1.2rem;

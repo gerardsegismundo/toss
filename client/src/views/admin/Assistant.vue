@@ -4,7 +4,11 @@
     <b-card class="mb-5">
       <header>
         Credentials
-        <span class="text-success hov" @click="showCredential = !showCredential">
+    
+        <span
+          class="text-success hov"
+          @click="showCredential = !showCredential"
+        >
           {{ showCredential? 'Hide' : 'Show'}}&nbsp;Credentials
           <i
             class="fas"
@@ -23,17 +27,6 @@
         >IBM Dashboard</a>
       </header>
       <div class="card-body">
-        <!--  -->
-        <!--  -->
-        <!-- <credentials-form-row
-          :type="showCredential? 'text' : 'password'"
-          labelFor="api"
-          label="API Key"
-          :credentials="credentials.apiKey"
-          @keyup="showOptions = true"
-        />-->
-        <!--  -->
-        <!--  -->
         <b-row class="mb-4">
           <b-col cols="2" class="mt-1">
             <label for="api">API Key:&nbsp;</label>
@@ -68,7 +61,11 @@
             <label for="api">Version:&nbsp;</label>
           </b-col>
           <b-col>
-            <datepicker @selected="showOptions = true" v-model="credentials.version"/>
+            <datepicker
+              v-model="credentials.version"
+              @dp-hide="showOptions = true"
+              :config="options"
+            ></datepicker>
           </b-col>
         </b-row>
 
@@ -108,8 +105,33 @@
       </b-col>
     </b-row>
 
-    <assistant-workspace :workspaces="workspaces" @onGetWorkspaces="getWorkSpaces"/>
+    <div class="workspace-wrapper">
+      <transition
+        name="fade"
+        mode="out-in"
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+        v-if="isLoading"
+      >
+        <spinner v-show="isLoading" :message="loadingMessage" class="my-4"/>
+      </transition>
 
+      <transition
+        v-show="!isLoading"
+        name="fade"
+        mode="out-in"
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+      >
+        <assistant-workspace
+          v-show="!isLoading"
+          :workspaces="workspaces"
+          @onGetWorkspaces="getWorkSpaces"
+          @spinnerOn="spinnerOn"
+          @spinnerOff="spinnerOff"
+        />
+      </transition>
+    </div>
     <!-- MODAL CREATE SKILL -->
     <b-modal size="m" ref="createModal" id="createModal" hide-footer title="Create skill">
       <div class="px-4 pt-2">
@@ -131,7 +153,9 @@ import { API_WATSONS_CREDENTIALS } from '@/../config/server.js'
 
 import credentialsFormRow from '@/components/admin/Credentials.formRow.vue'
 import assistantWorkspace from '@/components/admin/AssistantWorkspace.vue'
-import datepicker from 'vuejs-datepicker'
+import spinner from '@/components/admin/Spinner.vue'
+
+import datepicker from 'vue-bootstrap-datetimepicker'
 
 export default {
   name: 'assistantComponent',
@@ -148,19 +172,30 @@ export default {
         version: '',
         workspaceId: ''
       },
-      intents: []
+      intents: [],
+
+      options: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false
+      },
+      loadingMessage: '',
+      isLoading: false
     }
   },
 
   methods: {
-    cancelUpdate() {
-      this.getCredentials()
-      this.showOptions = false
+    spinnerOn(message) {
+      this.isLoading = true
+      this.loadingMessage = message
+    },
+
+    spinnerOff() {
+      this.isLoading = false
     },
 
     async getCredentials() {
       const credentials = await this.axios.get(API_WATSONS_CREDENTIALS)
-      // console.log(credentials)
+
       if (credentials.data === '') {
         return (this.shouldRegister = true)
       }
@@ -169,7 +204,24 @@ export default {
     },
 
     async createCredentials() {
-      await this.axios.post(API_WATSONS_CREDENTIALS, this.credentials)
+      const create = await this.axios.post(
+        API_WATSONS_CREDENTIALS,
+        this.credentials
+      )
+
+      if (!create) {
+        return this.$notify({
+          group: 'error',
+          title: 'Credentials Registration',
+          text: `Credentials registration error!`
+        })
+      }
+
+      this.$notify({
+        group: 'success',
+        title: 'Credentials Registration',
+        text: `Credentials registered successfully!`
+      })
 
       this.showOptions = false
     },
@@ -180,30 +232,57 @@ export default {
         this.credentials
       )
 
+      this.$notify({
+        group: 'success',
+        title: 'Credentials Update',
+        text: `Updating credentials success!`
+      })
+
       this.showOptions = false
     },
 
     async getWorkSpaces() {
+      this.spinnerOn('Loading skills...')
+
       const res = await this.axios.get(API_WATSONS_WORKSPACE)
 
       if (res.data === null || res.data === '') {
         return (this.shoudRegister = true)
       }
 
-      console.log(res.data)
-
+      this.spinnerOff()
       this.workspaces = res.data.workspaces
     },
 
     async createWorkspace() {
       this.$refs.createModal.hide()
+      this.spinnerOn(`Creating ${this.skillName}...`)
 
-      await this.axios.post(API_WATSONS_WORKSPACE, {
+      const createSkill = await this.axios.post(API_WATSONS_WORKSPACE, {
         workspace: this.skillName
+      })
+
+      if (!createSkill) {
+        return this.$notify({
+          group: 'error',
+          title: 'Create Skill Error',
+          text: `Creating skill ${this.skillName} has failed.`
+        })
+      }
+
+      this.$notify({
+        group: 'success',
+        title: 'Create Skill Success',
+        text: `Skill ${this.skillName} has been successfully created.`
       })
 
       this.skillName = ''
       this.getWorkSpaces()
+    },
+
+    cancelUpdate() {
+      this.getCredentials()
+      this.showOptions = false
     }
   },
 
@@ -215,7 +294,8 @@ export default {
   components: {
     credentialsFormRow,
     assistantWorkspace,
-    datepicker
+    datepicker,
+    spinner
   }
 }
 </script>
@@ -265,6 +345,11 @@ i {
   color: rgba(34, 34, 34, 1);
 }
 
+.workspace-wrapper {
+  min-height: 270px;
+  transition: 0.5s;
+}
+
 .workspace-item .card {
   padding: 0 0 2rem 0.5rem;
   border-left: 4px solid var(--vuestic-green);
@@ -299,20 +384,3 @@ i {
 }
 </style>
 
-
-<style>
-/* -- date picker modification -- */
-
-.vdp-datepicker input {
-  width: 100%;
-  border: 1px solid #ced4da;
-  height: calc(2.25rem + 2px);
-  padding: 0.375rem 0.75rem;
-}
-
-.vdp-datepicker__calendar .cell.selected,
-.vdp-datepicker__calendar .cell.selected:hover,
-.vdp-datepicker__calendar .cell:not(.blank):not(.disabled).day:hover {
-  background: var(--vuestic-green);
-}
-</style>

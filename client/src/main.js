@@ -6,6 +6,16 @@ Vue.use(BootstrapVue)
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+// Datepicker-bootstrap
+import datePicker from 'vue-bootstrap-datetimepicker'
+import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css'
+Vue.use(datePicker)
+
+// Vue-notification
+import Notifications from 'vue-notification'
+Vue.use(Notifications)
+
+// Vuex
 import App from './App.vue'
 import router from './router'
 import { store } from './store/index.js'
@@ -19,8 +29,9 @@ Vue.use(VueAxios, axios)
 import vClickOutside from 'v-click-outside'
 Vue.use(vClickOutside)
 
-// Vue-2 Animate.css
-require('vue2-animate/dist/vue2-animate.min.css')
+// Animate.css depedency
+import animate from 'animate.css'
+Vue.use(animate)
 
 Vue.config.productionTip = false
 

@@ -161,6 +161,12 @@ export default {
         content: this.response
       })
 
+      this.$notify({
+        group: 'success',
+        title: 'Add Response',
+        text: `Response created successfully.`
+      })
+
       this.phrasing = ''
       this.response = ''
       this.entity = ''
@@ -171,13 +177,29 @@ export default {
 
     async editResponse(id) {
       this.$refs.editModal.show()
+      console.log('edit')
       const response = await this.axios.get(`${API_RESPONSE_DATA}/${id}`)
+
       this.editData = response.data
     },
 
     async updateResponse() {
       this.$refs.editModal.hide()
-      await this.axios.patch(API_RESPONSE_DATA, this.editData)
+      const update = await this.axios.patch(API_RESPONSE_DATA, this.editData)
+
+      if (!update) {
+        this.$notify({
+          group: 'error',
+          title: 'Update Response',
+          text: `Updating response failed.`
+        })
+      } else {
+        this.$notify({
+          group: 'success',
+          title: 'Update Response',
+          text: `Respose has been updated.`
+        })
+      }
 
       this.getResponseData()
     },
@@ -188,7 +210,23 @@ export default {
     },
 
     async deleteConfirmed() {
-      await this.axios.delete(`${API_RESPONSE_DATA}/${this.deleteId}`)
+      const deleteR = await this.axios.delete(
+        `${API_RESPONSE_DATA}/${this.deleteId}`
+      )
+
+      if (!deleteR) {
+        this.$notify({
+          group: 'error',
+          title: 'Delete Response',
+          text: `Delete response failed.`
+        })
+      } else {
+        this.$notify({
+          group: 'success',
+          title: 'Delete Response',
+          text: `Delete response successfull.`
+        })
+      }
 
       this.getResponseData()
       this.$refs.deleteModal.hide()

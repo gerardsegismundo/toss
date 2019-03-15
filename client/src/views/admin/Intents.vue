@@ -5,7 +5,9 @@
     <b-card>
       <button class="btn btn-primary mb-4" v-b-modal.addModal>Add intent</button>
 
-      <table class="table table-striped table-hover">
+      <spinner v-if="isLoading" :message="loadingMessage" class="mb-5"/>
+
+      <table v-show="!isLoading" class="table table-striped table-hover">
         <thead>
           <th>Intent</th>
           <th>Description</th>
@@ -82,13 +84,16 @@
 </template>
 
 <script>
-import { API_WATSONS } from '@/../config/server.js'
+import { API_WATSONS_INTENTS } from '@/../config/server.js'
+import spinner from '@/components/admin/Spinner.vue'
 
 export default {
   data() {
     return {
       msg:
         'Train your virtual assistant with this intent by adding unique examples of what your users would say.',
+      isLoading: false,
+      loadingMessage: '',
       skill: {
         id: '',
         name: ''
@@ -109,16 +114,27 @@ export default {
   },
 
   methods: {
+    spinnerOn(message) {
+      this.isLoading = true
+      this.loadingMessage = message
+    },
+
+    spinnerOff() {
+      this.isLoading = false
+    },
     getRouteParams() {
       this.skill.name = this.$route.params.name
       this.skill.id = this.$route.params.id
     },
 
     async getIntents() {
+      this.spinnerOn('Loading intents... ')
+
       const res = await this.axios.get(
-        `${API_WATSONS}/list-intents/${this.skill.id}`
+        `${API_WATSONS_INTENTS}/${this.skill.id}`
       )
 
+      this.spinnerOff()
       this.intents = res.data
     },
 
@@ -131,10 +147,7 @@ export default {
         intent: name
       }
 
-      const res = await this.axios.get(`${API_WATSONS}/intent/`, {
-        params
-      })
-
+      const res = await this.axios.get(API_WATSONS_INTENTS, { params })
       this.intent.examples = res.data.examples
     },
 
@@ -145,6 +158,7 @@ export default {
     },
 
     async createIntent() {
+      this.$refs.addModal.hide()
       const payload = {
         workspace_id: this.skill.id,
         intent: this.create.intent,
@@ -152,25 +166,27 @@ export default {
         examples: this.create.userExamples
       }
 
-      const api = `${API_WATSONS}/create-intent`
-      const res = await this.axios.post(api, payload)
-      console.log(res)
+      this.spinnerOn(`Creating ${this.create.intent}...`)
+
+      const res = await this.axios.post(API_WATSONS_INTENTS, payload)
 
       this.getIntents()
-
       this.create.intent = ''
       this.create.description = ''
-      this.$refs.addModal.hide()
+      this.spinnerOff()
     },
 
     editIntent() {},
-
     deleteIntent() {}
   },
 
   created() {
     this.getRouteParams()
     this.getIntents()
+  },
+
+  components: {
+    spinner
   }
 }
 </script>
@@ -179,6 +195,10 @@ export default {
 <style scoped>
 .card {
   padding: 0;
+}
+
+.card-body {
+  min-height: 20rem;
 }
 .table-wrapper {
   background-color: #ffffff;
