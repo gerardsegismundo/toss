@@ -1,10 +1,9 @@
 <template>
   <div>
     <h3 class="mb-4">Watson Assistant v1</h3>
-    <b-card class="mb-5">
+    <b-card class="card-credential mb-5">
       <header>
         Credentials
-    
         <span
           class="text-success hov"
           @click="showCredential = !showCredential"
@@ -27,64 +26,89 @@
         >IBM Dashboard</a>
       </header>
       <div class="card-body">
-        <b-row class="mb-4">
+        <b-form v-if="!isLoading.credentials">
+          <b-form-row></b-form-row>
+          <b-row class="mb-4">
+            <b-col cols="2" class="mt-1">
+              <label for="api">API Key:&nbsp;</label>
+            </b-col>
+            <b-col>
+              <input
+                required
+                autocomplete="off"
+                class="form-control"
+                :type="showCredential? 'text' : 'password'"
+                v-model="credentials.apiKey"
+                @keyup="showOptions = true"
+              >
+            </b-col>
+          </b-row>
+          <b-row class="mb-4">
+            <b-col cols="2" class="mt-1">
+              <label for="url">URL:&nbsp;</label>
+            </b-col>
+            <b-col>
+              <input
+                required
+                class="form-control"
+                type="url"
+                v-model="credentials.url"
+                @keyup="showOptions = true"
+              >
+            </b-col>
+          </b-row>
+          <b-row class="mb-4">
+            <b-col cols="2" class="mt-1">
+              <label for="api">Version:&nbsp;</label>
+            </b-col>
+            <b-col>
+              <datepicker
+                v-model="credentials.version"
+                @dp-hide="showOptions = true"
+                :config="options"
+              ></datepicker>
+            </b-col>
+          </b-row>
+        </b-form>
+        <spinner v-else :message="loadingMessage.credentials" class="mt-5"/>
+        <b-row class="mb-4" v-if="!shouldRegister">
           <b-col cols="2" class="mt-1">
-            <label for="api">API Key:&nbsp;</label>
+            <label for="url">Skill:&nbsp;</label>
           </b-col>
           <b-col>
-            <input
-              required
-              class="form-control"
-              :type="showCredential? 'text' : 'password'"
-              v-model="credentials.apiKey"
-              autocomplete="new-password"
-              @keyup="showOptions = true"
+            <b-form-select
+              :disabled="isLoading.skills? true : false"
+              v-model="workspace.selected"
+              :options="workspace.options"
+              @change="showOptions = true"
             >
-          </b-col>
-        </b-row>
-        <b-row class="mb-4">
-          <b-col cols="2" class="mt-1">
-            <label for="url">URL:&nbsp;</label>
-          </b-col>
-          <b-col>
-            <input
-              required
-              class="form-control"
-              type="url"
-              v-model="credentials.url"
-              @keyup="showOptions = true"
-            >
-          </b-col>
-        </b-row>
-        <b-row class="mb-4">
-          <b-col cols="2" class="mt-1">
-            <label for="api">Version:&nbsp;</label>
-          </b-col>
-          <b-col>
-            <datepicker
-              v-model="credentials.version"
-              @dp-hide="showOptions = true"
-              :config="options"
-            ></datepicker>
-          </b-col>
-        </b-row>
-
-        <b-row class="mb-4">
-          <b-col cols="2" class="mt-1">
-            <label for="url">Workspace ID:&nbsp;</label>
-          </b-col>
-          <b-col>
-            <input
-              required
+              <template slot="first">
+                <option :value="{}" disabled>-- Please select an option --</option>
+              </template>
+            </b-form-select>
+            <!-- <input
               class="form-control"
               type="text"
               v-model="credentials.workspaceId"
               @keyup="showOptions = true"
-            >
+            >-->
           </b-col>
         </b-row>
+        <b-row
+          v-if="shouldRegister && !isLoading.credentials"
+          class="register-link-row d-flex justify-content-end mr-1"
+        >
+          <p class="text-secondary">
+            No account yet? Register
+            <a href class="text-success">here.</a>
+          </p>
+        </b-row>
       </div>
-      <b-card-footer v-if="showOptions" class="d-flex justify-content-end mt-2 pr-4">
+      <b-card-footer
+        v-if="showOptions || shouldRegister  && !isLoading.credentials"
+        class="d-flex justify-content-end pr-4"
+        :class="[shouldRegister? '' : 'mt-2' ]"
+      >
         <button class="btn btn-pale btn-micro mr-4" v-if="shouldRegister">Cancel</button>
         <button v-else class="btn btn-pale btn-micro mr-4" @click="cancelUpdate">Cancel</button>
         <button
@@ -96,35 +120,40 @@
       </b-card-footer>
     </b-card>
     <hr>
-    <b-row class="mt-4 mb-1">
+    <b-row class="mt-4 mb-1" v-if="!shouldRegister">
       <b-col>
         <h3>Skills</h3>
       </b-col>
       <b-col class="d-flex flex-row-reverse">
-        <button class="btn btn-primary" v-b-modal.createModal>Create new</button>
+        <button
+          class="btn btn-primary"
+          v-b-modal.createModal
+          :disabled="isLoading.skills? true : false"
+        >Create new</button>
       </b-col>
     </b-row>
 
+    <!-- ASSISTANT WORKSPACE -->
     <div class="workspace-wrapper">
       <transition
         name="fade"
         mode="out-in"
         enter-active-class="animated fadeIn"
         leave-active-class="animated fadeOut"
-        v-if="isLoading"
+        v-if="isLoading.skills"
       >
-        <spinner v-show="isLoading" :message="loadingMessage" class="my-4"/>
+        <spinner v-show="isLoading.skills" :message="loadingMessage.skills" class="my-4"/>
       </transition>
 
       <transition
-        v-show="!isLoading"
+        v-show="!isLoading.skills"
         name="fade"
         mode="out-in"
         enter-active-class="animated fadeIn"
         leave-active-class="animated fadeOut"
       >
         <assistant-workspace
-          v-show="!isLoading"
+          v-show="!isLoading.skills"
           :workspaces="workspaces"
           @onGetWorkspaces="getWorkSpaces"
           @spinnerOn="spinnerOn"
@@ -156,6 +185,7 @@ import assistantWorkspace from '@/components/admin/AssistantWorkspace.vue'
 import spinner from '@/components/admin/Spinner.vue'
 
 import datepicker from 'vue-bootstrap-datetimepicker'
+import { setTimeout } from 'timers'
 
 export default {
   name: 'assistantComponent',
@@ -170,73 +200,106 @@ export default {
         apiKey: '',
         url: '',
         version: '',
-        workspaceId: ''
+        workspaceId: '',
+        workspaceName: ''
+      },
+      workspace: {
+        selected: {},
+        options: []
       },
       intents: [],
-
       options: {
         format: 'YYYY-MM-DD',
         useCurrent: false
       },
-      loadingMessage: '',
-      isLoading: false
+      loadingMessage: {
+        credentials: '',
+        skills: ''
+      },
+      isLoading: {
+        credentials: false,
+        skills: false
+      }
     }
   },
 
   methods: {
-    spinnerOn(message) {
-      this.isLoading = true
-      this.loadingMessage = message
+    spinnerOn(message, context = 'skills') {
+      if (context === 'credentials') {
+        this.loadingMessage.credentials = message
+        this.isLoading.credentials = true
+      } else {
+        this.isLoading.skills = true
+        this.loadingMessage.skills = message
+      }
     },
 
-    spinnerOff() {
-      this.isLoading = false
+    spinnerOff(context = 'skills') {
+      if (context === 'credentials') this.isLoading.credentials = false
+      this.isLoading.skills = false
     },
 
     async getCredentials() {
       const credentials = await this.axios.get(API_WATSONS_CREDENTIALS)
 
-      if (credentials.data === '') {
-        return (this.shouldRegister = true)
-      }
+      if (credentials.data === '') return (this.shouldRegister = true)
 
       this.credentials = credentials.data
+      this.workspace.selected.name = this.credentials.workspaceName
+      this.workspace.selected.id = this.credentials.workspaceId
     },
 
     async createCredentials() {
+      this.spinnerOn('Creating credentials... ', 'credentials')
+
       const create = await this.axios.post(
         API_WATSONS_CREDENTIALS,
         this.credentials
       )
 
       if (!create) {
-        return this.$notify({
+        this.$notify({
           group: 'error',
           title: 'Credentials Registration',
           text: `Credentials registration error!`
         })
+      } else {
+        this.$notify({
+          group: 'success',
+          title: 'Credentials Registration',
+          text: `Credentials registered successfully!`
+        })
       }
 
-      this.$notify({
-        group: 'success',
-        title: 'Credentials Registration',
-        text: `Credentials registered successfully!`
-      })
-
+      this.spinnerOff('credentials')
+      this.getWorkSpaces()
       this.showOptions = false
     },
 
     async updateCredentials(newValue, credential) {
+      this.credentials.workspaceId = this.workspace.selected.id
+      this.credentials.workspaceName = this.workspace.selected.name
+
+      console.log(this.credentials)
+
       const res = await this.axios.put(
         API_WATSONS_CREDENTIALS,
         this.credentials
       )
 
-      this.$notify({
-        group: 'success',
-        title: 'Credentials Update',
-        text: `Updating credentials success!`
-      })
+      if (!res) {
+        this.$notify({
+          group: 'success',
+          title: 'Credentials Update',
+          text: `Updating credentials failed!`
+        })
+      } else {
+        this.$notify({
+          group: 'success',
+          title: 'Credentials Update',
+          text: `Updating credentials success!`
+        })
+      }
 
       this.showOptions = false
     },
@@ -252,6 +315,17 @@ export default {
 
       this.spinnerOff()
       this.workspaces = res.data.workspaces
+
+      this.workspace.options = []
+      this.workspaces.map(workspace => {
+        this.workspace.options.push({
+          text: workspace.name,
+          value: {
+            name: workspace.name,
+            id: workspace.workspace_id
+          }
+        })
+      })
     },
 
     async createWorkspace() {
@@ -291,6 +365,9 @@ export default {
     this.getWorkSpaces()
   },
 
+  updated() {
+    if (this.shouldRegister) this.isLoading.skills = false
+  },
   components: {
     credentialsFormRow,
     assistantWorkspace,
@@ -332,6 +409,10 @@ span.hov:hover {
   color: #1e7e34 !important;
 }
 
+.card-credential {
+  min-height: 384px;
+}
+
 .card-footer {
   margin: -1.25rem;
   background-color: rgba(0, 0, 0, 0.02);
@@ -343,6 +424,17 @@ i {
 
 .hov:hover i {
   color: rgba(34, 34, 34, 1);
+}
+
+.register-link-row {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.register-link-row a {
+  text-decoration: underline;
+  font-weight: 600;
 }
 
 .workspace-wrapper {

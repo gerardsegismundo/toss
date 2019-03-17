@@ -3,7 +3,11 @@
     <app-header/>
     <app-body/>
     <app-footer/>
-    <notifications group="success" classes="vue-notification success" position="bottom left"/>
+    <notifications
+      group="success"
+      classes="vue-notification success"
+      position="bottom left"
+    />
     <notifications group="error" classes="vue-notification error" position="bottom left"/>
   </div>
 </template>
@@ -173,6 +177,22 @@ ul {
 .btn-primary:focus,
 .btn-primary.focus {
   box-shadow: 0 0 0 0rem rgba(0, 123, 255, 0.5);
+}
+
+.btn.btn-primary[disabled],
+.btn.btn-primary[disabled]:hover,
+.medium-editor-toolbar .medium-editor-action[disabled],
+.medium-editor-toolbar .medium-editor-action[disabled]:hover {
+  background-color: #1ec260;
+  color: #14803f;
+  opacity: 0.5;
+}
+
+.btn-primary.disabled,
+.btn-primary:disabled {
+  color: #212529;
+  background-color: #4ae387;
+  border-color: #4ae387;
 }
 
 .btn.btn-pale {

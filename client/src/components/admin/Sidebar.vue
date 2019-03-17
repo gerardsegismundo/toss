@@ -8,10 +8,17 @@
           </b-col>
           <b-col>IBM Cloud</b-col>
           <b-col cols="1">
-            <i class="fas text-primary fa-angle-right" :class="[isOnClick ? 'is-up': 'is-down']"></i>
+            <i
+              class="fas text-primary fa-angle-right"
+              :class="[isOnClick ? 'is-up': 'is-down']"
+            ></i>
           </b-col>
         </b-row>
       </li>
+      <!-- 
+        ** FIX animation
+        * planning to use velocity.js
+      -->
       <div class="ibm-list" :class="isOnClick? 'slide-down':'slide-up'">
         <router-link :to="{name: 'Assistant'}" v-if="isOnClick">
           <li class="text-center">Watson Assistant v1</li>
@@ -20,6 +27,7 @@
           <li class="text-center">Discovery-8r</li>
         </router-link>
       </div>
+
       <router-link :to="{name: 'Response'}">
         <li>
           <i class="fas fa-comment-alt text-primary mr-2"></i>
@@ -42,11 +50,22 @@
   </nav>
 </template>
 
+
 <script>
+import velocity from 'velocity-animate'
+
 export default {
   data() {
     return {
       isOnClick: false
+    }
+  },
+  methods: {
+    slideDown() {
+      // this.$ref..velocity("slideDown", { duration: 1500 })
+    },
+    slideUp() {
+      // .velocity("slideUp", { delay: 500, duration: 1500 });
     }
   }
 }
@@ -56,7 +75,6 @@ export default {
 .ibm-list {
   animation-duration: 0.5s;
   transition: ease-in;
-  z-index: 999;
 }
 
 .ibm-list.slide-down {
@@ -78,16 +96,18 @@ export default {
     transition: 0.5s;
   }
   100% {
-    height: 8rem;
+    height: 8vw;
     transition: 0.5s;
   }
 }
 
 @keyframes slideUp {
   0% {
-    height: 8rem;
+    /* transition: 0.5s;
+    height: 8rem; */
   }
   100% {
+    transition: 0.5s;
     height: 0rem;
   }
 }

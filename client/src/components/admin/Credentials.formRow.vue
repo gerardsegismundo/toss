@@ -26,7 +26,6 @@ export default {
   methods: {
     onKeyUp() {
       console.log('bitch')
-      // this.$emit('keyUp', true)
     }
   }
 }

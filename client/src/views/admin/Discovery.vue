@@ -4,7 +4,10 @@
     <b-card class="mb-5">
       <header>
         Credentials
-        <span class="text-success hov" @click="showCredential = !showCredential">
+        <span
+          class="text-success hov"
+          @click="showCredential = !showCredential"
+        >
           {{ showCredential? 'Hide' : 'Show'}}&nbsp;Credentials
           <i
             class="fas"

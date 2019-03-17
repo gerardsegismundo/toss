@@ -1,7 +1,12 @@
 <template>
   <div>
     <b-row class="workspace-item">
-      <b-col v-for="workspace in workspaces" :key="workspace.workspace_id" cols="4" class="mt-4">
+      <b-col
+        v-for="workspace in workspaces"
+        :key="workspace.workspace_id"
+        cols="4"
+        class="mt-4"
+      >
         <b-card @click="viewSkill(workspace.name,workspace.workspace_id)">
           <div class="workspace-header">
             <b-row>
@@ -141,7 +146,7 @@ export default {
   border-top: 2px solid white;
   border-right: 2px solid white;
   transition: 0.5s;
-  =opacity: 1;
+  opacity: 1;
 }
 
 .workspace-item .card:hover {
@@ -151,7 +156,7 @@ export default {
   border-right: 2px solid lightgrey;
 }
 
-= .workspace-header {
+.workspace-header {
   margin-bottom: 2rem;
   font-weight: 350;
   font-size: 1.2rem;
