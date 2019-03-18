@@ -1,7 +1,7 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export const store = new Vuex.Store({
 	state: {
@@ -28,17 +28,17 @@ export const store = new Vuex.Store({
 			setTimeout(() => {
 				state.allMessages.unshift({
 					sender: 'bot',
-					content: 'Hi! How may I help you?'
-				});
-			}, 700);
+					content: { text: 'Hi! How may I help you?' }
+				})
+			}, 700)
 		},
 
 		storeMessage: (state, payload) => state.allMessages.push(payload),
 		removeLoader: (state) => state.allMessages.pop(),
 		clearMessages: (state) => (state.allMessages = []),
 		isClicked: (state, payload) => {
-			if (payload == true) return (state.isActive = true);
-			state.isActive = false;
+			if (payload == true) return (state.isActive = true)
+			state.isActive = false
 		},
 		setLoading: (state, payload) => (state.isLoading = payload)
 		// updateCrentials: (state, payload) => (state.credentials = payload)
@@ -46,11 +46,12 @@ export const store = new Vuex.Store({
 
 	actions: {
 		greetUser: (context) => context.commit('greetUser'),
-		storeMessage: (context, payload) => context.commit('storeMessage', payload),
+		storeMessage: (context, payload) =>
+			context.commit('storeMessage', payload),
 		removeLoader: (context) => context.commit('removeLoader'),
 		clearMessages: (context) => context.commit('clearMessages'),
 		isClicked: (context, payload) => context.commit('isClicked', payload),
 		setLoading: (context, payload) => context.commit('setLoading', payload)
 		// updateCredentials: (context, payload) => context.commit('updateCredentials', payload)
 	}
-});
+})

@@ -26,12 +26,31 @@
           class="d-flex"
           :class="[message.sender == 'user' ? 'justify-content-end' : 'justify-content-start']"
         >
+          <!--
+          ** CONVERSATION
+          -->
           <img v-if="message.content == 'loading'" :src="loader">
-
-          <p
-            v-else
-            :class="[message.sender == 'user' ? 'bot-response' : 'user-request']"
-          >{{ message.content }}</p>
+          <div v-else :class="[message.sender == 'user' ? 'bot-response' : 'user-request']">
+            <h5 v-if="message.content.title">{{message.content.title}}</h5>
+            <p>{{ message.sender == 'user'? message.content : message.content.text }}</p>
+            <!-- if contains image URL -->
+            <b-img
+              class="mb-3"
+              fluid
+              thumbnail
+              v-if="message.content.imageURL"
+              :src="message.content.imageURL"
+            />
+            <!-- **
+            *** if response content an a tag 
+            **-->
+            <p v-if="message.content.link && message.content.link.length > 1">
+              Here's the link:
+              <a :href="message.content.link">{{ message.content.link }}</a>
+            </p>
+          </div>
+          <!--
+          -->
         </b-row>
       </div>
     </div>
@@ -145,8 +164,10 @@ export default {
 
   scroll-behavior: smooth;
 }
-.chat-container p {
-  max-width: 60%;
+
+.chat-container div {
+  max-width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .chat-container::-webkit-scrollbar {
@@ -159,7 +180,7 @@ export default {
 
 .bot-response,
 .user-request {
-  padding: 0.857rem 1.6rem;
+  padding: 0.857rem 1.6rem 0rem 1.6rem;
   width: auto;
   overflow-wrap: break-word;
 }

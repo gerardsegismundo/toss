@@ -189,8 +189,8 @@ import { setTimeout } from 'timers'
 
 export default {
   name: 'assistantComponent',
-  data() {
-    return {
+  data: () => ({
+    
       shouldRegister: false,
       showOptions: false,
       showCredential: false,
@@ -220,8 +220,8 @@ export default {
         credentials: false,
         skills: false
       }
-    }
-  },
+    }),
+  
 
   methods: {
     spinnerOn(message, context = 'skills') {

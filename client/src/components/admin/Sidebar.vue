@@ -8,10 +8,7 @@
           </b-col>
           <b-col>IBM Cloud</b-col>
           <b-col cols="1">
-            <i
-              class="fas text-primary fa-angle-right"
-              :class="[isOnClick ? 'is-up': 'is-down']"
-            ></i>
+            <i class="fas text-primary fa-angle-right" :class="[isOnClick ? 'is-up': 'is-down']"></i>
           </b-col>
         </b-row>
       </li>
@@ -96,7 +93,7 @@ export default {
     transition: 0.5s;
   }
   100% {
-    height: 8vw;
+    height: 8rem;
     transition: 0.5s;
   }
 }

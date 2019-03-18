@@ -20,15 +20,15 @@
                 <i class="fa fa-play"></i>
               </b-btn>
             </b-input-group-append>
-          </b-input-group>
-          <div v-show="displayPhrasing" class="display-phrasing">
-            <div v-for="phrasing in phrasings" :key="phrasing.id" class="phrasings cbox-group">
-              <div
-                :id="phrasing.id"
-                @click="sendSuggestion(phrasing.phrasing, phrasing.id)"
-              >{{ phrasing.phrasing }}</div>
+            <div v-show="displayPhrasing" class="display-phrasing" style>
+              <div v-for="phrasing in phrasings" :key="phrasing.id" class="phrasings cbox-group">
+                <div
+                  :id="phrasing.id"
+                  @click="sendSuggestion(phrasing.phrasing, phrasing.id)"
+                >{{ phrasing.phrasing }}</div>
+              </div>
             </div>
-          </div>
+          </b-input-group>
         </b-col>
         <b-col cols="2" lg="3"></b-col>
       </b-row>
@@ -155,6 +155,10 @@ span {
 
 .display-phrasing {
   border: 1px solid #ced4da;
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  z-index: 99;
 }
 
 .display-phrasing {

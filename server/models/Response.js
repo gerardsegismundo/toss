@@ -30,7 +30,9 @@ function validateResponseUpd(response) {
 	const schema = {
 		_id: Joi.required(),
 		__v: Joi.required(),
-		entities: Joi.array().items(Joi.string().min(3).max(50).required().lowercase()),
+		entities: Joi.array().items(
+			Joi.string().min(3).max(200).required().lowercase()
+		),
 		content: Joi.string().min(3).required(),
 		phrasing: Joi.string().min(3).required()
 	}
