@@ -15,11 +15,11 @@ router.get('/request/:request', async (req, res) => {
 
 	const { request } = req.params
 
+	let answeredByLocal = false
 	// LOCAL RESPONSE
 	const messageArray = request.trim().split(' ')
-
 	// FIX - possible solution: map() in $in
-	/* 	const local = await Response.findOne({ entities: { $in: messageArray } })
+	const local = await Response.findOne({ entities: { $in: messageArray } })
 		.then(async (response) => {
 			// If entity found.
 			if (response) {
@@ -37,51 +37,61 @@ router.get('/request/:request', async (req, res) => {
 				// PROBLEM -- if has matched a single entity, does not look for the next response that has more matched entites
 				const requiredEntity = response.entities.length
 				if (matchCount >= requiredEntity) {
-					fileAccess()
-					return res.send(response.content)
-				}
+					//**  if response has a matched entity in files response a file
+					answeredByLocal = true
+					setTimeout(async () => {
+						const mongoAccess = await fileAccess(response.content)
+
+						if (mongoAccess == 'Not found.') {
+							console.log(response.content)
+							return res.send({ text: response.content })
+						}
+						return res.send(mongoAccess.tags)
+					}, 1000)
+				} else answeredByLocal = false
 			}
 
 			// await getEntities(messageArray, request);
 		})
-		.catch((err) => console.log('ERROR LOCAL' + err)) */
+		.catch((err) => console.log('ERROR LOCAL' + err))
 
 	// WATSON RESPONSE
-	/* if (!local) { */
-	const watson = require('watson-developer-cloud')
-	const { Credentials } = require('../models/Credentials')
+	if (!local && answeredByLocal === false) {
+		const watson = require('watson-developer-cloud')
+		const { Credentials } = require('../models/Credentials')
 
-	const credentials = await Credentials.findOne({ service: 'assistant' })
-	const { apiKey, url, workspaceId, version } = credentials
+		const credentials = await Credentials.findOne({ service: 'assistant' })
+		const { apiKey, url, workspaceId, version } = credentials
 
-	const conversation = new watson.AssistantV1({
-		iam_apikey: apiKey,
-		version,
-		url
-	})
+		const conversation = new watson.AssistantV1({
+			iam_apikey: apiKey,
+			version,
+			url
+		})
 
-	const payload = {
-		workspace_id: workspaceId,
-		input: { text: request }
-	}
-
-	// Send the input to the conversation service
-	conversation.message(payload, async (err, data) => {
-		if (err) return res.end()
-
-		const text = await data.output.text[0]
-
-		if (text == "I didn't understand. You can try rephrasing.") {
-			return res.send({
-				text: "I didn't understand. You can try rephrasing."
-			})
+		const payload = {
+			workspace_id: workspaceId,
+			input: { text: request }
 		}
 
-		const mongoAccess = await fileAccess(text)
+		// Send the input to the conversation service
+		conversation.message(payload, async (err, data) => {
+			if (err) return res.end()
 
-		if (mongoAccess == 'Not found.') return res.send('Not available.')
-		res.send(mongoAccess.tags)
-	})
+			const text = await data.output.text[0]
+
+			if (text == "I didn't understand. You can try rephrasing.") {
+				return res.send({
+					text: "I didn't understand. You can try rephrasing."
+				})
+			}
+
+			const mongoAccess = await fileAccess(text)
+
+			if (mongoAccess == 'Not found.') return res.send('Not available.')
+			res.send(mongoAccess.tags)
+		})
+	}
 })
 
 // @route POST /search-phrase

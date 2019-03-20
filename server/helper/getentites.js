@@ -1,38 +1,36 @@
-const wordPOS = require('wordpos');
-const wordpos = new wordPOS();
+const wordPOS = require('wordpos')
+const wordpos = new wordPOS()
 
-const { Filtered } = require('../models/Filtered');
-
-async function saveFiltered(filtered) {
-	await new Filtered(filtered).save();
-}
+const { Filtered } = require('../models/Filtered')
 
 async function getEntities(messageArray, request) {
 	// Proper nouns
-	const properNouns = [];
+	const properNouns = []
 
 	await messageArray.map((word) => {
 		if (/[A-Z]/.test(word[0])) {
-			properNouns.push(word);
-			return;
+			properNouns.push(word)
+			return
 		}
-	});
+	})
 
 	// Nouns
-	let commonNouns = [];
+	let commonNouns = []
 	await wordpos.getNouns(request, (noun) => {
-		commonNouns = [ ...noun ];
-	});
+		commonNouns = [ ...noun ]
+	})
 
 	// Verbs
-	let verbs = [];
+	let verbs = []
 	await wordpos.getVerbs(request, (verb) => {
-		verbs = [ ...verb ];
-	});
+		verbs = [ ...verb ]
+	})
 
 	// Entities
-	let entities = [ ...properNouns, ...commonNouns, ...verbs ].map((word) => word.toLowerCase());
-	entities = [ ...new Set(entities) ];
+	let entities = [ ...properNouns, ...commonNouns, ...verbs ].map((word) =>
+		word.toLowerCase()
+	)
+	entities = [ ...new Set(entities) ]
 
 	const filtered = {
 		phrasing: request,
@@ -42,11 +40,11 @@ async function getEntities(messageArray, request) {
 		},
 		verbs,
 		entities
-	};
+	}
 
-	saveFiltered(filtered);
+	new Filtered(filtered).save()
 
-	return filtered;
+	return filtered
 }
 
-exports.getEntities = getEntities;
+exports.getEntities = getEntities

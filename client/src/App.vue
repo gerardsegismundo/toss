@@ -1,13 +1,9 @@
 <template>
   <div>
-    <app-header/>
+    <app-header class="app-header" :class="[isActive? 'not-visible': 'is-visible']"/>
     <app-body/>
-    <app-footer/>
-    <notifications
-      group="success"
-      classes="vue-notification success"
-      position="bottom left"
-    />
+    <app-footer :class="[isActive? 'not-visible': 'is-visible']"/>
+    <notifications group="success" classes="vue-notification success" position="bottom left"/>
     <notifications group="error" classes="vue-notification error" position="bottom left"/>
   </div>
 </template>
@@ -16,23 +12,37 @@
 import Header from '@/components/client/Header.vue'
 import Footer from '@/components/client/Footer.vue'
 import Body from '@/components/client/Body.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'MainComponent',
-  data() {
-    return {
-      isAdmin: false
+  data: () => ({
+    isAdmin: false,
+    headerStyle: {
+      opacity: 1,
+      height: ''
     }
-  },
+  }),
   components: {
     appHeader: Header,
     appFooter: Footer,
     appBody: Body
-  }
+  },
+  computed: mapGetters(['isActive'])
 }
 </script>
 
 <style>
+.app-header {
+  transition: height 3s;
+}
+.is-visible {
+  opacity: 1;
+}
+.not-visible {
+  height: 0vh;
+  opacity: 0;
+}
 html {
   scroll-behavior: smooth;
 }

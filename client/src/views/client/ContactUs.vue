@@ -1,13 +1,12 @@
 <template>
-  <div class="hello">
-    {{msg}}
-  </div>
+  <div class="hello">{{ msg }}</div>
 </template>
 
 <script>
+import ChatBox from '@/components/client/ChatBox'
 export default {
   name: 'ContactUsPage',
-  data () {
+  data() {
     return {
       msg: 'Welcome to Your ContactPage'
     }
@@ -17,5 +16,4 @@ export default {
 
 
 <style scoped>
-
 </style>

@@ -37,7 +37,11 @@ export const store = new Vuex.Store({
 		removeLoader: (state) => state.allMessages.pop(),
 		clearMessages: (state) => (state.allMessages = []),
 		isClicked: (state, payload) => {
-			if (payload == true) return (state.isActive = true)
+			if (payload == true) {
+				document.body.style.overflow = 'hidden'
+				return (state.isActive = true)
+			}
+			document.body.style.overflow = 'auto'
 			state.isActive = false
 		},
 		setLoading: (state, payload) => (state.isLoading = payload)

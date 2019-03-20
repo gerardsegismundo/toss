@@ -2,20 +2,18 @@
   <div v-show="!isAdmin">
     <app-navbar/>
     <app-carousel/>
-    <app-chat-input/>
   </div>
 </template>
 <script>
-import Carousel from './Carousel.vue';
-import Navbar from './Navbar.vue';
-import ChatInput from './ChatInput.vue';
+import Carousel from './Carousel.vue'
+import Navbar from './Navbar.vue'
 
 export default {
   name: 'headerComponent',
   data() {
     return {
       isAdmin: false
-    };
+    }
   },
   watch: {
     $route() {
@@ -23,12 +21,12 @@ export default {
         window.location.href.includes('admin-dashboard') ||
         window.location.href.includes('auth')
       )
-        this.isAdmin = true;
-      else this.isAdmin = false;
+        this.isAdmin = true
+      else this.isAdmin = false
     }
   },
   beforeMount() {
-    this.confirmAdmin();
+    this.confirmAdmin()
   },
   methods: {
     confirmAdmin() {
@@ -36,14 +34,13 @@ export default {
         window.location.href.includes('admin-dashboard') ||
         window.location.href.includes('auth')
       )
-        this.isAdmin = true;
-      else this.isAdmin = false;
+        this.isAdmin = true
+      else this.isAdmin = false
     }
   },
   components: {
     appNavbar: Navbar,
-    appCarousel: Carousel,
-    appChatInput: ChatInput
+    appCarousel: Carousel
   }
-};
+}
 </script>
