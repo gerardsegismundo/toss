@@ -1,29 +1,27 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Joi = require('joi-browser');
+const Joi = require('joi');
 
 const Message = mongoose.model(
-	'message',
-	new Schema({
-		content: {
-			type: String,
-			required: true,
-			minlength: 3
-		},
-		date: {
-			type: Date,
-			default: Date.now
-		}
-	})
+  'message',
+  new Schema({
+    content: {
+      type: String,
+      required: true,
+      minlength: 3
+    },
+    date: {
+      type: Date,
+      default: Date.now
+    }
+  })
 );
 
 function validateMessage(message) {
-	const schema = {
-		content: Joi.string().min(3).max(100).required()
-	};
-
-	return Joi.validate(message, schema);
+  const schema = Joi.object({
+    content: Joi.string().min(3).max(100).required()
+  });
+  return schema.validate(message);
 }
 
-exports.Message = Message;
-exports.validateMessage = validateMessage;
+module.exports = { Message, validateMessage };

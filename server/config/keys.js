@@ -1,5 +1,8 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 if (process.env.NODE_ENV === 'production') {
-	module.exports = { mongoURI: process.env.MONGO_URI };
+  module.exports = { mongoURI: process.env.MONGO_URI };
 } else {
-	module.exports = { mongoURI: 'mongodb://localhost/toss' };
+  module.exports = { mongoURI: process.env.MONGO_URI || 'mongodb://localhost/toss' };
 }

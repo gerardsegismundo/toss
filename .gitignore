@@ -4,8 +4,12 @@ node_modules
 notes
 
 # local env files
+.env
 .env.local
 .env.*.local
+
+# Uploads
+server/uploads/
 
 # Log files
 npm-debug.log*
