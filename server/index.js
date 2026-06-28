@@ -3,9 +3,14 @@ const express = require('express');
 const app = express();
 const winston = require('winston');
 
-require('./startup/logging');
+// Logging setup
+require('./startup/logging')();
+
+// Routes
 require('./startup/routes')(app);
-require('./startup/db');
+
+// Database connection
+require('./startup/db')();
 
 const port = process.env.PORT || 5000;
 

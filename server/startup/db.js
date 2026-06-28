@@ -8,3 +8,5 @@ module.exports = () => {
     .then(() => winston.info('Connected to MongoDB...'))
     .catch((err) => winston.error('MongoDB Connection error: ' + err.message));
 };
+</write_to_file>
+</execute_command>
