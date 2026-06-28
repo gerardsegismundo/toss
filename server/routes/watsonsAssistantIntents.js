@@ -1,70 +1,73 @@
-const express = require('express')
-const router = express.Router()
-const watson = require('watson-developer-cloud')
-const { Credentials } = require('../models/Credentials')
+const express = require('express');
+const router = express.Router();
+const AssistantV1 = require('ibm-watson/assistant/v1');
+const { IamAuthenticator } = require('ibm-watson/auth');
+const { Credentials } = require('../models/Credentials');
 
-async function watsonAssistant() {
-	const credentials = await Credentials.findOne({ service: 'assistant' })
-	console.log(credentials)
+async function getWatsonAssistant() {
+  const credentials = await Credentials.findOne({ service: 'assistant' });
+  if (!credentials) return null;
 
-	const { apiKey, url, version } = credentials
+  const { apiKey, url, version } = credentials;
 
-	const assistant = new watson.AssistantV1({
-		iam_apikey: apiKey,
-		version,
-		url
-	})
-
-	return assistant
+  return new AssistantV1({
+    authenticator: new IamAuthenticator({ apikey: apiKey }),
+    serviceUrl: url,
+    version: version || '2019-02-21'
+  });
 }
 
-// @route GET /list-intents/:id
-// @desc get list intents
+// @route GET /:id
+// @desc Get list of intents for a workspace
 router.get('/:id', async (req, res) => {
-	const assistant = await watsonAssistant()
+  try {
+    const assistant = await getWatsonAssistant();
+    if (!assistant) return res.status(400).send('Watson credentials not configured.');
 
-	const payload = { workspace_id: req.params.id }
+    const response = await assistant.listIntents({ workspaceId: req.params.id });
+    res.send(response.result.intents);
+  } catch (err) {
+    res.status(400).send(err.message || err);
+  }
+});
 
-	assistant.listIntents(payload, (err, response) => {
-		if (err) return res.status(400).send(err)
-		res.send(response.intents)
-	})
-})
-
-// @route GET /intent
-// @desc Get information about an intent.
+// @route GET /
+// @desc Get information about an intent
 router.get('/', async (req, res) => {
-	const { workspace_id, intent } = req.query
-	const payload = {
-		workspace_id,
-		intent
-	}
+  try {
+    const { workspace_id, intent } = req.query;
+    const assistant = await getWatsonAssistant();
+    if (!assistant) return res.status(400).send('Watson credentials not configured.');
 
-	const assistant = await watsonAssistant()
-	assistant.listExamples(payload, (err, response) => {
-		if (err) return res.send(err)
-		res.send(response)
-	})
-})
+    const response = await assistant.listExamples({
+      workspaceId: workspace_id,
+      intent: intent
+    });
+    res.send(response.result);
+  } catch (err) {
+    res.send(err.message || err);
+  }
+});
 
-// @route POST /create-intent
-// @desc create an intent
+// @route POST /
+// @desc Create an intent
 router.post('/', async (req, res) => {
-	const assistant = await watsonAssistant()
+  try {
+    const assistant = await getWatsonAssistant();
+    if (!assistant) return res.status(400).send('Watson credentials not configured.');
 
-	const { workspace_id, intent, description, examples } = req.body
+    const { workspace_id, intent, description, examples } = req.body;
 
-	const payload = {
-		workspace_id,
-		intent,
-		description,
-		examples
-	}
+    const response = await assistant.createIntent({
+      workspaceId: workspace_id,
+      intent,
+      description,
+      examples
+    });
+    res.send(response.result);
+  } catch (err) {
+    res.status(400).send(err.message || err);
+  }
+});
 
-	assistant.createIntent(payload, (err, response) => {
-		if (err) return res.send(err)
-		res.send(response)
-	})
-})
-
-module.exports = router
+module.exports = router;
