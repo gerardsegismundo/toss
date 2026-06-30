@@ -2,6 +2,46 @@ const { Response, validateRequest, validateNewResponse } = require('../domain/re
 const { File } = require('../domain/watson/File');
 const { Credentials } = require('../domain/watson/Credentials');
 const { sendMessage } = require('../infrastructure/watson/watsonClient');
+const llmService = require('./llmService');
+
+// ─── LLM-Powered Response (Primary) ─────────────────────────
+
+async function getLLMResponse(message) {
+  if (llmService.isConfigured()) {
+    try {
+      const response = await llmService.getResponse(message, []);
+      if (response) return { text: response };
+    } catch (err) {
+      console.error('LLM response failed, falling back:', err.message);
+    }
+  }
+  // Fall back to traditional matching
+  return getResponseByRequest(message);
+}
+
+async function* getStreamingLLMResponse(message, conversationHistory = []) {
+  if (llmService.isConfigured()) {
+    try {
+      const stream = llmService.getStreamingResponse(message, conversationHistory);
+      let fullResponse = '';
+      for await (const chunk of stream) {
+        fullResponse += chunk;
+        yield { type: 'chunk', text: chunk };
+      }
+      yield { type: 'done', fullText: fullResponse };
+      return;
+    } catch (err) {
+      console.error('LLM streaming failed:', err.message);
+      yield { type: 'error', text: err.message };
+    }
+  }
+  // Fall back: non-streaming response
+  const response = await getResponseByRequest(message);
+  yield { type: 'chunk', text: response.text || JSON.stringify(response) };
+  yield { type: 'done', fullText: response.text || JSON.stringify(response) };
+}
+
+// ─── Traditional Response Matching ──────────────────────────
 
 async function getResponseByRequest(request) {
   const messageArray = request.trim().split(' ');
@@ -107,6 +147,8 @@ async function addKeyword(id, keyword) {
 }
 
 module.exports = {
+  getLLMResponse,
+  getStreamingLLMResponse,
   getResponseByRequest,
   getAllResponses,
   getResponseById,
@@ -116,5 +158,3 @@ module.exports = {
   searchPhrasing,
   addKeyword
 };
-</write_to_file>
-</execute_command>
