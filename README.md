@@ -1,100 +1,220 @@
-# TOSS
+# 🤖 TOSS (Test Organization Support System)
 
-TOSS (Test Organization Support System) is an interactive chatbot designed to assist **software testing and QA teams** within an organization. It provides a conversational interface where team members can ask questions and receive answers about test artifacts, metrics, automation resources, and reference materials — all from a centralized knowledge base.
+<p align="center">
+  <strong>An AI-powered knowledge assistant for QA teams.</strong><br>
+  <em>Originally built in March 2019 using IBM Watson Assistant.<br>
+  Modernized with Large Language Models to demonstrate the evolution of conversational AI.</em>
+</p>
 
-### How It Works
+<p align="center">
 
-1. **User sends a message** via the chat input on the homepage
-2. **Local response matching**: The system first tries to find a matching answer from its own MongoDB database. It does this by:
-   - Extracting keywords (entities, nouns, verbs) from the user's message using NLP (`wordpos`)
-   - Looking up configured "responses" (question-answer pairs) that have matching entities
-   - If enough entities match, it returns the stored answer or linked file
-3. **Watson Assistant fallback**: If no local response is found, the message is forwarded to IBM Watson Assistant. Watson processes it using configured intents and workspaces (skills), and returns an AI-generated response
-4. **LLM-powered responses (new)**: If an OpenAI API key is configured, the system uses GPT-4o-mini as the primary response engine with the local knowledge base as context, providing much more natural and accurate answers
-5. **File attachments**: Responses can include image URLs, external links, and rich text content — not just plain text
-6. **Logging & analysis**: Every user message gets NLP-processed and stored in the "Filtered" collection, allowing administrators to analyze what users are asking
+![Vue.js](https://img.shields.io/badge/Vue.js-2.x-42b883?logo=vuedotjs)
+![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
+![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb)
+![IBM Watson](https://img.shields.io/badge/IBM-Watson_Assistant-052FAD?logo=ibm)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?logo=openai)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-### Key Features
+</p>
 
-| Feature | Description |
-|---------|-------------|
-| **Chat Interface** | Real-time conversational UI with chat bubbles, loading indicators, and auto-scroll |
-| **Dual Response Engine** | Local MongoDB responses + IBM Watson Assistant AI for intelligent replies |
-| **LLM Integration (new)** | Optional OpenAI GPT-4o-mini for natural, context-aware answers with streaming |
-| **NLP Entity Extraction** | Uses `wordpos` to automatically extract proper nouns, common nouns, and verbs from messages |
-| **Admin Dashboard** | Full-featured admin panel to manage responses, Watson credentials, skills, intents, and uploads |
-| **Excel Import** | Upload Excel files (.xls/.xlsx) and convert them to structured JSON data |
-| **Watson Integration** | Create, rename, and delete Watson workspaces/skills; manage intents and training examples directly from the UI |
-| **Response Management** | CRUD operations for local response pairs (phrasing → content) with entity keyword matching |
-| **Admin Authentication** | Login page for secure access to the admin dashboard |
+---
+
+# 📖 Overview
+
+**TOSS (Test Organization Support System)** is an intelligent chatbot designed to help software testing and QA teams quickly find information through natural conversation.
+
+Instead of searching through documentation, spreadsheets, or internal knowledge bases, team members can simply ask questions and receive relevant answers about:
+
+- 🧪 Test artifacts
+- 📊 QA metrics
+- 🤖 Automation resources
+- 📚 Reference materials
+- 📄 Internal documentation
+- 🔍 Knowledge base content
+
+The application combines traditional Natural Language Processing (NLP), structured knowledge retrieval, and modern Large Language Models (LLMs) to create a conversational assistant for enterprise environments.
+
+---
+
+# 🚀 Why This Project Exists
+
+This project has an interesting history.
+
+I originally built **TOSS in March 2019** during my internship, several years before ChatGPT and today's LLM-powered assistants became mainstream.
+
+At the time, conversational AI primarily relied on:
+
+- IBM Watson Assistant
+- Intent classification
+- Entity recognition
+- NLP pipelines
+- Rule-based dialogue
+- Knowledge-base matching
+
+My goal was simple:
+
+> Allow users to ask questions naturally and receive accurate answers from an organization's internal knowledge base.
+
+Although the technology available in 2019 was very different, the overall objective is remarkably similar to what many modern AI assistants accomplish today.
+
+---
+
+# 🔄 Why I'm Revisiting It
+
+The rise of Large Language Models has transformed how conversational AI applications are built.
+
+Rather than starting from scratch, I wanted to modernize one of my earliest AI projects and explore how a traditional intent-based chatbot can evolve into an LLM-powered assistant.
+
+This repository now serves as both:
+
+- a snapshot of conversational AI before the LLM era
+- an ongoing modernization project using today's AI technologies
+
+Instead of replacing the original architecture, the project demonstrates how existing enterprise chatbot solutions can be enhanced with generative AI while continuing to leverage structured organizational knowledge.
+
+---
+
+# ✨ Key Features
+
+| Feature                            | Description                                                |
+| ---------------------------------- | ---------------------------------------------------------- |
+| 💬 Interactive Chat Interface      | Clean conversational UI built with Vue.js                  |
+| 🧠 Intelligent Knowledge Retrieval | Searches local knowledge before using AI                   |
+| 🤖 IBM Watson Assistant            | Original intent-based conversational engine                |
+| 🚀 OpenAI Integration              | Modern GPT-powered responses with streaming                |
+| 📂 Knowledge Base Management       | CRUD interface for question/answer content                 |
+| 🔍 NLP Entity Extraction           | Automatic noun, verb, and entity recognition using WordPos |
+| 📈 Conversation Analytics          | Stores processed user messages for analysis                |
+| 📊 Excel Import                    | Convert spreadsheets into structured knowledge             |
+| 🔐 Admin Dashboard                 | Manage chatbot configuration and content                   |
+| ⚡ Streaming Responses             | Server-Sent Events (SSE) for real-time AI responses        |
+
+---
+
+# 🏗️ Architecture
+
+```text
+                User
+                 │
+                 ▼
+          Vue.js Chat Client
+                 │
+                 ▼
+          Express.js API Layer
+                 │
+     ┌───────────┴───────────┐
+     │                       │
+     ▼                       ▼
+MongoDB Knowledge      IBM Watson Assistant
+Base Matching          (Original AI Engine)
+     │
+     ▼
+ OpenAI GPT Integration
+ (Modern LLM Engine)
+     │
+     ▼
+ Natural Language Response
+```
+
+---
+
+# 🧠 How It Works
+
+When a user submits a question, TOSS follows a layered retrieval process:
+
+### 1️⃣ User sends a message
+
+The request is submitted through the chat interface.
+
+### 2️⃣ NLP Processing
+
+The application extracts:
+
+- nouns
+- verbs
+- entities
+
+using the **WordPos** NLP library.
+
+### 3️⃣ Local Knowledge Search
+
+The extracted entities are compared against the MongoDB knowledge base.
+
+If a relevant answer already exists, it is returned immediately.
+
+### 4️⃣ AI Fallback
+
+If no suitable local response is found, the application forwards the request to IBM Watson Assistant or, when configured, OpenAI GPT.
+
+### 5️⃣ Response Returned
+
+The chatbot responds with:
+
+- formatted text
+- links
+- images
+- documentation
+- AI-generated answers
+
+depending on the configured response source.
+
+---
+
+# 🛠️ Technology Stack
+
+## Frontend
+
+- Vue.js 2
+- BootstrapVue
+- Vue Router
+- Vuex
+
+## Backend
+
+- Node.js
+- Express.js
+
+## Database
+
+- MongoDB
+- Mongoose
+
+## AI & NLP
+
+- IBM Watson Assistant
+- OpenAI GPT
+- WordPos (WordNet NLP)
+
+## Other
+
+- Axios
+- Joi Validation
+- Multer
+- ExcelJS
+- Server-Sent Events (SSE)
 
 ### Page Structure (Client)
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Home | Main chatbot interface with chat input and message box |
-| `/test-artifacts` | Test Artifacts | Placeholder page for test documentation |
-| `/metrics` | Metrics | Placeholder page for QA metrics/dashboard |
-| `/automation` | Automation | Placeholder page for automation resources |
-| `/reference-materials` | Reference Materials | Placeholder page for reference docs |
-| `/contact-us` | Contact Us | Placeholder contact page |
-| `/auth/login` | Login | Admin authentication |
-| `/admin-dashboard` | Admin Dashboard | Main admin panel with sidebar navigation |
+| Route                  | Page                | Description                                            |
+| ---------------------- | ------------------- | ------------------------------------------------------ |
+| `/`                    | Home                | Main chatbot interface with chat input and message box |
+| `/test-artifacts`      | Test Artifacts      | Placeholder page for test documentation                |
+| `/metrics`             | Metrics             | Placeholder page for QA metrics/dashboard              |
+| `/automation`          | Automation          | Placeholder page for automation resources              |
+| `/reference-materials` | Reference Materials | Placeholder page for reference docs                    |
+| `/contact-us`          | Contact Us          | Placeholder contact page                               |
+| `/auth/login`          | Login               | Admin authentication                                   |
+| `/admin-dashboard`     | Admin Dashboard     | Main admin panel with sidebar navigation               |
 
 ### Admin Dashboard Sections
 
-| Section | Description |
-|---------|-------------|
+| Section                 | Description                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
 | **Watson Assistant v1** | Configure Watson API credentials (API Key, URL, Version), list/create/rename/delete skills (workspaces) |
-| **Discovery-8r** | Placeholder for IBM Discovery integration |
-| **Response** | Create, edit, and delete local question-answer pairs with entity keyword matching |
-| **Excel** | Upload Excel spreadsheets and convert them to JSON format for data import |
-| **Filtered** | View all NLP-processed user messages with extracted nouns, verbs, and entities |
-
-### Data Flow Diagram
-
-```
-User Message → Chat Interface → API Request (/api/response/request/:message)
-                                    │
-                                    ▼
-                      ┌─────────────────────────┐
-                      │  Check Local Responses  │
-                      │  (MongoDB Response       │
-                      │   collection - entity    │
-                      │   matching)              │
-                      └─────────┬───────────────┘
-                                │
-                    ┌───────────┴───────────┐
-                    ▼                       ▼
-              Match Found?           No Match?
-                    │                       │
-                    ▼                       ▼
-          ┌──────────────────┐    ┌──────────────────────┐
-          │ Return local     │    │ Query Watson          │
-          │ response or      │    │ Assistant via API     │
-          │ file attachment  │    │ (if credentials are   │
-          │                  │    │ configured)           │
-          └──────────────────┘    └──────────────────────┘
-                                           │
-                                           ▼
-                                 ┌──────────────────┐
-                                 │ Return Watson     │
-                                 │ response or file  │
-                                 │ attachment        │
-                                 └──────────────────┘
-
-Every request is also processed by NLP (wordpos) and saved to the Filtered collection.
-
-If OpenAI LLM is configured, it becomes the primary response engine with the knowledge base as context.
-```
-
-## Main Technologies Used
-
-- **Language**: JavaScript (ES6+)
-- **Frontend**: Vue.js 2 with Bootstrap-Vue
-- **Backend**: Node.js / Express.js
-- **Database**: MongoDB with Mongoose
-- **AI/NLP**: IBM Watson Assistant v1 (`ibm-watson` v12+), `wordpos` (WordNet-based NLP), and optional OpenAI GPT-4o-mini
+| **Discovery-8r**        | Placeholder for IBM Discovery integration                                                               |
+| **Response**            | Create, edit, and delete local question-answer pairs with entity keyword matching                       |
+| **Excel**               | Upload Excel spreadsheets and convert them to JSON format for data import                               |
+| **Filtered**            | View all NLP-processed user messages with extracted nouns, verbs, and entities                          |
 
 ## Project Architecture (Domain-Driven Design)
 
@@ -243,23 +363,23 @@ npm start
 
 #### Free Features (no cost at all)
 
-| Feature | Cost |
-|---------|------|
-| Running the app locally | **$0** |
-| MongoDB Community (local) | **$0** |
-| MongoDB Atlas (free tier, 512MB) | **$0** |
-| Chat interface & admin UI | **$0** |
+| Feature                                | Cost   |
+| -------------------------------------- | ------ |
+| Running the app locally                | **$0** |
+| MongoDB Community (local)              | **$0** |
+| MongoDB Atlas (free tier, 512MB)       | **$0** |
+| Chat interface & admin UI              | **$0** |
 | Local response matching (entity-based) | **$0** |
-| Excel file upload & conversion | **$0** |
-| NLP word extraction (wordpos) | **$0** |
+| Excel file upload & conversion         | **$0** |
+| NLP word extraction (wordpos)          | **$0** |
 
 #### Optional Paid Features
 
-| Feature | Cost | When You Need It |
-|---------|------|------------------|
-| **IBM Watson Assistant** | Free tier: 10,000 API calls/month. Paid: ~$0.0025/call after | Only if you want Watson-powered responses (the app works without it using local responses) |
-| **OpenAI API** (LLM feature) | GPT-4o-mini: ~$0.15/1M input tokens, ~$0.60/1M output tokens. Typical chat: ~$0.001–$0.005 per conversation | Only if you want AI-powered answers. **Completely optional** — the app falls back to local responses if not configured |
-| **MongoDB Atlas** (if not using local) | Free tier: 512MB storage — **$0**. Paid: ~$57/month for dedicated cluster | Only if you don't want to install MongoDB locally |
+| Feature                                | Cost                                                                                                        | When You Need It                                                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **IBM Watson Assistant**               | Free tier: 10,000 API calls/month. Paid: ~$0.0025/call after                                                | Only if you want Watson-powered responses (the app works without it using local responses)                             |
+| **OpenAI API** (LLM feature)           | GPT-4o-mini: ~$0.15/1M input tokens, ~$0.60/1M output tokens. Typical chat: ~$0.001–$0.005 per conversation | Only if you want AI-powered answers. **Completely optional** — the app falls back to local responses if not configured |
+| **MongoDB Atlas** (if not using local) | Free tier: 512MB storage — **$0**. Paid: ~$57/month for dedicated cluster                                   | Only if you don't want to install MongoDB locally                                                                      |
 
 ### If You Want to Test the LLM Feature
 
@@ -274,28 +394,28 @@ npm start
 
 ## API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /api/response/chat` | **NEW** Streaming chat with LLM (SSE) |
-| `GET /api/response/request/:request` | Get chatbot response for a message |
-| `POST /api/response/search-phrasing` | Search phrasing suggestions |
-| `GET /api/response-data` | List all responses |
-| `GET /api/response-data/:id` | Get response by ID |
-| `POST /api/response-data` | Create a response |
-| `PATCH /api/response-data` | Update a response |
-| `DELETE /api/response-data/:id` | Delete a response |
-| `GET /api/filtered` | List filtered (NLP-processed) messages |
-| `DELETE /api/filtered/:id` | Delete a filtered item |
-| `POST /api/excel/convert-file` | Upload & convert Excel to JSON |
-| `GET /api/watson-assistant/credentials` | Get Watson credentials |
-| `POST /api/watson-assistant/credentials` | Create Watson credentials |
-| `PUT /api/watson-assistant/credentials` | Update Watson credentials |
-| `GET /api/watson-assistant/workspace` | List Watson workspaces/skills |
-| `POST /api/watson-assistant/workspace` | Create workspace |
-| `PATCH /api/watson-assistant/workspace` | Rename workspace |
-| `DELETE /api/watson-assistant/workspace/:id` | Delete workspace |
-| `GET /api/watson-assistant/intents/:id` | List intents for a workspace |
-| `POST /api/watson-assistant/intents` | Create an intent |
+| Endpoint                                     | Description                            |
+| -------------------------------------------- | -------------------------------------- |
+| `POST /api/response/chat`                    | **NEW** Streaming chat with LLM (SSE)  |
+| `GET /api/response/request/:request`         | Get chatbot response for a message     |
+| `POST /api/response/search-phrasing`         | Search phrasing suggestions            |
+| `GET /api/response-data`                     | List all responses                     |
+| `GET /api/response-data/:id`                 | Get response by ID                     |
+| `POST /api/response-data`                    | Create a response                      |
+| `PATCH /api/response-data`                   | Update a response                      |
+| `DELETE /api/response-data/:id`              | Delete a response                      |
+| `GET /api/filtered`                          | List filtered (NLP-processed) messages |
+| `DELETE /api/filtered/:id`                   | Delete a filtered item                 |
+| `POST /api/excel/convert-file`               | Upload & convert Excel to JSON         |
+| `GET /api/watson-assistant/credentials`      | Get Watson credentials                 |
+| `POST /api/watson-assistant/credentials`     | Create Watson credentials              |
+| `PUT /api/watson-assistant/credentials`      | Update Watson credentials              |
+| `GET /api/watson-assistant/workspace`        | List Watson workspaces/skills          |
+| `POST /api/watson-assistant/workspace`       | Create workspace                       |
+| `PATCH /api/watson-assistant/workspace`      | Rename workspace                       |
+| `DELETE /api/watson-assistant/workspace/:id` | Delete workspace                       |
+| `GET /api/watson-assistant/intents/:id`      | List intents for a workspace           |
+| `POST /api/watson-assistant/intents`         | Create an intent                       |
 
 ## Notes
 
