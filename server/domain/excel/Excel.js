@@ -12,5 +12,3 @@ const Excel = mongoose.model(
 );
 
 module.exports = { Excel };
-</write_to_file>
-</execute_command>

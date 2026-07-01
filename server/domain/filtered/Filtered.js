@@ -18,5 +18,3 @@ const filteredSchema = new Schema({
 const Filtered = mongoose.model('filtered', filteredSchema);
 
 module.exports = { Filtered };
-</write_to_file>
-</execute_command>

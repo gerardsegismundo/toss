@@ -12,5 +12,3 @@ const connectDB = async (mongoURI) => {
 };
 
 module.exports = { connectDB };
-</write_to_file>
-</execute_command>

@@ -40,5 +40,3 @@ async function sendMessage(request, workspaceId, apiKey, url, version) {
 }
 
 module.exports = { getWatsonAssistant, sendMessage };
-</write_to_file>
-</execute_command>

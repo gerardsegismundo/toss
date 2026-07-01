@@ -90,33 +90,40 @@ Instead of replacing the original architecture, the project demonstrates how exi
 | 📊 Excel Import                    | Convert spreadsheets into structured knowledge             |
 | 🔐 Admin Dashboard                 | Manage chatbot configuration and content                   |
 | ⚡ Streaming Responses             | Server-Sent Events (SSE) for real-time AI responses        |
+| 🚢 Docker Compose                  | One-command containerized deployment with MongoDB          |
+| 🛡️ Rate Limiting                   | Per-route API throttling for chat, uploads, and general API |
+| 🏠 Ollama Integration              | Local LLM support via Ollama (llama3.2, etc.)               |
 
 ---
 
 # 🏗️ Architecture
 
 ```text
-                User
-                 │
-                 ▼
-          Vue.js Chat Client
-                 │
-                 ▼
-          Express.js API Layer
-                 │
-     ┌───────────┴───────────┐
-     │                       │
-     ▼                       ▼
-MongoDB Knowledge      IBM Watson Assistant
-Base Matching          (Original AI Engine)
-     │
-     ▼
- OpenAI GPT Integration
- (Modern LLM Engine)
-     │
-     ▼
- Natural Language Response
-```
+                 User
+                  │
+                  ▼
+           Vue.js Chat Client
+                  │
+                  ▼
+           Express.js API Layer
+                  │
+      ┌───────────┴───────────┐
+      │                       │
+      ▼                       ▼
+ MongoDB Knowledge      IBM Watson Assistant
+ Base Matching          (Original AI Engine)
+      │
+      ▼
+  OpenAI GPT Integration
+  (Modern LLM Engine)
+      │
+      ▼
+  Ollama Local LLMs
+  (Local/Private LLM Engine)
+      │
+      ▼
+  Natural Language Response
+  ```
 
 ---
 
@@ -146,7 +153,7 @@ If a relevant answer already exists, it is returned immediately.
 
 ### 4️⃣ AI Fallback
 
-If no suitable local response is found, the application forwards the request to IBM Watson Assistant or, when configured, OpenAI GPT.
+If no suitable local response is found, the application forwards the request to IBM Watson Assistant, OpenAI GPT, or, when configured, a local Ollama LLM.
 
 ### 5️⃣ Response Returned
 
@@ -185,6 +192,7 @@ depending on the configured response source.
 
 - IBM Watson Assistant
 - OpenAI GPT
+- Ollama (local LLMs)
 - WordPos (WordNet NLP)
 
 ## Other
@@ -194,3 +202,5 @@ depending on the configured response source.
 - Multer
 - ExcelJS
 - Server-Sent Events (SSE)
+- Docker Compose
+- express-rate-limit

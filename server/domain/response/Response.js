@@ -60,5 +60,3 @@ module.exports = {
   validateRequest,
   validateNewResponse
 };
-</write_to_file>
-</execute_command>

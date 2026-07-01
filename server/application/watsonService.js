@@ -90,5 +90,3 @@ module.exports = {
   listExamples,
   createIntent
 };
-</write_to_file>
-</execute_command>

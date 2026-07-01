@@ -33,11 +33,6 @@ const credentialsSchema = new Schema({
     type: String,
     minlength: 10,
     maxlength: 80
-  }
-});
-
-const Credentials = mongoose.model('credentials', credentialsSchema);
+}
 
 module.exports = { Credentials };
-</write_to_file>
-</execute_command>

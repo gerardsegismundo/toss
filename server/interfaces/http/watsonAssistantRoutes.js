@@ -96,5 +96,3 @@ router.post('/intents', async (req, res) => {
 });
 
 module.exports = router;
-</write_to_file>
-</execute_command>

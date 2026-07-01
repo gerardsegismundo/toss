@@ -31,5 +31,3 @@ router.delete('/', async (req, res) => {
 router.get('*', (req, res) => res.end());
 
 module.exports = router;
-</write_to_file>
-</execute_command>

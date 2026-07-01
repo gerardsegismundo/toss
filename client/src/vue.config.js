@@ -10,5 +10,3 @@ module.exports = {
     }
   }
 };
-</write_to_file>
-</execute_command>

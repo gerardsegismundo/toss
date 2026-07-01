@@ -6,5 +6,3 @@ function errorHandler(err, req, res, next) {
 }
 
 module.exports = errorHandler;
-</write_to_file>
-</execute_command>

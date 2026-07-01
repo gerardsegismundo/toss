@@ -10,11 +10,6 @@ const fileSchema = new mongoose.Schema({
   intent: {
     type: String,
     required: true
-  }
-});
-
-const File = mongoose.model('file', fileSchema);
+}
 
 module.exports = { File };
-</write_to_file>
-</execute_command>

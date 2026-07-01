@@ -59,5 +59,3 @@ module.exports = {
   deleteAllFiltered,
   getEntitiesFromRequest
 };
-</write_to_file>
-</execute_command>
