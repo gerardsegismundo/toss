@@ -4,20 +4,15 @@
   >
     <div style class="m-auto">
       <h3 class="m-auto text-secondary">{{message}}</h3>
-      <Hexagon class="m-auto spinner"></Hexagon>
+      <b-spinner class="m-auto spinner" variant="primary" label="Loading..."></b-spinner>
     </div>
   </div>
 </template>
 
 <script>
-import { Hexagon } from 'vue-loading-spinner'
-
 export default {
   name: 'Spinner',
   props: ['message'],
-  components: {
-    Hexagon
-  }
 }
 </script>
 
