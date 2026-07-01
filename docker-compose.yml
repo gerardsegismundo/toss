@@ -26,12 +26,18 @@ services:
       - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.2:3b}
+      - WATSON_API_KEY=${WATSON_API_KEY:-}
+      - WATSON_URL=${WATSON_URL:-https://gateway.watsonplatform.net/assistant/api}
+      - WATSON_VERSION=${WATSON_VERSION:-2019-02-21}
+      - WATSON_WORKSPACE_ID=${WATSON_WORKSPACE_ID:-}
     volumes:
       - ./server:/app/server
       - ./client:/app/client
-      - ./package.json:/app/package.json
-      - /app/node_modules
+      - app_node_modules:/app/node_modules
+      - client_node_modules:/app/client/node_modules
     restart: unless-stopped
 
 volumes:
   mongodb_data:
+  app_node_modules:
+  client_node_modules:
